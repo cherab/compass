@@ -111,8 +111,8 @@ class COMPASSEquilibrium:
         strikepoints = self._process_efit_points(self._strikepoint_r[time_index, :],
                                                  self._strikepoint_z[time_index, :])
 
-        xpoints = self._process_efit_points(self._strikepoint_r[time_index, :],
-                                            self._strikepoint_z[time_index, :])
+        xpoints = self._process_efit_points(self._xpoint_r[time_index, :],
+                                            self._xpoint_z[time_index, :])
 
         f_profile = np.array([self._psin, self._rBphi[time_index, :]])
 
