@@ -75,7 +75,8 @@ class COMPASSEquilibrium:
             self._xpoint_z = f["output/separatrixGeometry/xpointCoordsZ"].value
 
 
-            self._rBphi = f["output/fluxFunctionProfiles/rBphi"].value
+            self._f = f["output/fluxFunctionProfiles/rBphi"].value
+            self._q = f["output/fluxFunctionProfiles/q"].value
 
             self._psin = f["output/fluxFunctionProfiles/normalizedPoloidalFlux"].value
 
@@ -114,12 +115,14 @@ class COMPASSEquilibrium:
         xpoints = self._process_efit_points(self._xpoint_r[time_index, :],
                                             self._xpoint_z[time_index, :])
 
-        f_profile = np.array([self._psin, self._rBphi[time_index, :]])
+        f_profile = np.array([self._psin, self._f[time_index, :]])
+
+        q_profile = np.array([self._psin, self._q[time_index, :]])
 
         equilibrium = EFITEquilibrium(r=r, z=z, psi_grid=psi_grid, psi_axis=psi_axis,
                                       psi_lcfs=psi_lcfs, magnetic_axis=magnetic_axis,
                                       x_points = xpoints, strike_points=strikepoints,
-                                      f_profile=f_profile, b_vacuum_radius=b_vacuum_radius,
+                                      f_profile=f_profile, q_profile=q_profile, b_vacuum_radius=b_vacuum_radius,
                                       b_vacuum_magnitude=b_vacuum_magnitude,
                                       lcfs_polygon=lcfs_polygon, limiter_polygon=limiter_polygon,
                                       time=time_slice)
