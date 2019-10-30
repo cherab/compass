@@ -42,7 +42,7 @@ class COMPASSEquilibrium_base:
 
         return poly_coords
 
-    def time_sliece(self, time):
+    def time_slice(self, time):
         """
         Constructs the EFITEquilibrium object for the closes available time to the passed time
         :param time: Time to generate EFITEquilibrium object. The nearest available time slice is chosen
@@ -65,7 +65,7 @@ class COMPASSEquilibrium_base:
 
 
         strike_points = []
-        for i, v in enumerate(zip(time_slice.R_strike_points.values, time_slice.Z_strike_points.values)):
+        for i, v in enumerate(zip(time_slice.R_strike_point.values, time_slice.Z_strike_point.values)):
             if not np.isnan(v[0]) and not np.isnan(v[1]):
                 strike_points.append(Point2D(v[0], v[1]))
 
@@ -74,8 +74,8 @@ class COMPASSEquilibrium_base:
         f_profile = np.concatenate((psi_n[np.newaxis, :], time_slice.f_profile.values[np.newaxis, :]))
         q_profile = np.concatenate((psi_n[np.newaxis, :], time_slice.q_profile.values[np.newaxis, :]))
 
-        b_vacuum_radius = time_slice.b_vacuum_radius
-        b_vacuum_magnitude = time_slice.b_vacuum_magnitude.values
+        b_vacuum_radius = time_slice.Btor_vacuum_radius
+        b_vacuum_magnitude = time_slice.Btor_vacuum_magnitude.values
 
         lcfs_polygon = self._process_efit_polygon(time_slice.R_lcfs.values, time_slice.Z_lcfs.values)
         limiter_polygon = self._process_efit_polygon(time_slice.R_limiter.values, time_slice.Z_limiter.values)
