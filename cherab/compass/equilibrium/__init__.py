@@ -1,0 +1,2 @@
+from .compass import COMPASSEquilibrium
+from .compass_upgrade import COMPASSUpgradeEquilibrium
