@@ -68,7 +68,6 @@ class COMPASSUpgradeEquilibrium(COMPASSEquilibrium_base):
         tmp.name = "Z_strike_point"
         tmp = tmp.to_dataset()
 
-
         equilibrium._data = xr.merge((equilibrium._data, tmp))
 
         equilibrium._data = equilibrium._data.merge(shot["f/fiesta_out"].to_dataset())
@@ -83,15 +82,11 @@ class COMPASSUpgradeEquilibrium(COMPASSEquilibrium_base):
         equilibrium._data = equilibrium._data.merge(shot["Bt_vac_mag_axis/fiesta_out"].to_dataset())
         equilibrium._data = equilibrium._data.rename({"Bt_vac_mag_axis": "Btor_vacuum_radius"})
 
-
-        r_boundary_signal = cudb.get_signal("boundary_r/fiesta_out:{0}".format(shot_number))
-        z_boundary_signal = cudb.get_signal("boundary_z/fiesta_out:{0}".format(shot_number))
-
-        boundary = xr.Dataset({"R_lcfs": (("time", "lcfs_vertex"), r_boundary_signal.data.T),
-                               "Z_lcfs": (("time", "lcfs_vertex"), z_boundary_signal.data.T)},
-                              coords={"time": r_boundary_signal.time_axis.data})
-
-        equilibrium._data = xr.merge((equilibrium._data, boundary))
+        tmp = shot["boundary_closed_r/fiesta_out"].to_dataset().rename({"boundary_closed_r": "R_lcfs",
+                                                                 "boundary_closed_r_axis1": "lcfs_vertex"})
+        tmp = tmp.merge(shot["boundary_closed_z/fiesta_out"].to_dataset().rename({"boundary_closed_z": "Z_lcfs",
+                                                                 "boundary_closed_z_axis1": "lcfs_vertex"}))
+        equilibrium._data = equilibrium._data.merge(tmp)
 
         tmp =shot["Z_limiter/fiesta_out"]
         tmp = xr.Dataset({"Z_limiter": ("limiter_vertex", tmp.Z_limiter.values)})
@@ -104,16 +99,6 @@ class COMPASSUpgradeEquilibrium(COMPASSEquilibrium_base):
         equilibrium._data = equilibrium._data.rename({"fiesta_psi_norm": "psi_n"})
 
         return equilibrium
-
-if __name__ == "__main__":
-    from cherab.tools.equilibrium.plot import plot_equilibrium
-    eq_shot = COMPASSUpgradeEquilibrium.from_database(7400)
-    time = 2.100
-
-    time_slice = eq_shot.time_slice(time)
-    plot_equilibrium(time_slice, detail=True)
-
-
 
 
 
