@@ -1,4 +1,4 @@
-from raysect.core.math.function cimport Function1D
+from raysect.core.math.function.float cimport Function1D
 
 from libc.math cimport exp
 
