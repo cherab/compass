@@ -1,1 +1,1 @@
-from .cudb import METISFromCUDB
+from .cudb import METISFromCUDB, metis_from_cudb
