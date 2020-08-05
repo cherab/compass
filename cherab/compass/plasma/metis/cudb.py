@@ -1,4 +1,5 @@
 from cherab.metis.data_source import MetisDataSource_base
+from cherab.metis import METISModel
 
 from pyCDB import client
 import cdb_extras.xarray_support as cdbxr
@@ -86,3 +87,6 @@ class METISFromCUDB(MetisDataSource_base):
 
         self._zerod_data = zerod
         self._profile0d_data = profil0d
+
+def metis_from_cudb(shot_number):
+    return METISModel(METISFromCUDB(shot_number))
