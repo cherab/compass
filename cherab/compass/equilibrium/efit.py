@@ -2,7 +2,7 @@ from cherab.compass.equilibrium.compass_equilibrium import COMPASSEquilibrium
 
 import xarray as xr
 
-def efit_from_cudb(shot_number):
+def efit_from_cdb(shot_number):
     """
     Obtains EFIT equilibrium data from CDB database for the specified shot.
     :param shot_number: COMPASS shot number
