@@ -1,20 +1,46 @@
 from raysect.core import Point2D
 
 from cherab.tools.equilibrium import EFITEquilibrium
-from cherab.tools.equilibrium.example import example_equilibrium
-from cherab.tools.equilibrium.plot import plot_equilibrium
-import cdb_extras.xarray_support as cdbxr
-import xarray as xr
+
 import numpy as np
 
+class COMPASSEquilibrium:
 
-class COMPASSEquilibrium_base:
+    def __init__(self, data = None):
+        if data is not None:
+            self.data = data
 
     @property
     def data(self):
         return self._data
 
-    def _process_efit_polygon(self, poly_r, poly_z):
+    @data.setter
+    def data(self, data):
+        self.verify_data_content(data)
+        self._data = data
+
+    @staticmethod
+    def verify_data_content(data):
+        """
+        Dataset containing equilibrium data has to contain specific data variables and coordinates
+        :param data: Dataset containing equilibrium data
+        :return:
+        """
+        man_coords = ["time", "R", "Z"]  # mandatory coordinates in data dataset
+        man_datavars = ["psi_grid", "psi_lcfs", "R_magnetic_axis", "Z_magnetic_axis",
+                        "R_strike_point", "Z_strike_point", "psi_n", "Btor_vacuum_radius",
+                        "R_lcfs", "Z_lcfs"]  # mandatory data variables in data dataset
+
+        for i in man_coords:
+            if not i in data.coords.keys():
+                raise KeyError("Dataset data does not include mandatory coordinate {}.".format(i))
+
+        for i in man_datavars:
+            if not i in data.data_vars.keys():
+                raise KeyError("Dataset data does not include mandatory data variable {}.".format(i))
+
+    @staticmethod
+    def process_efit_polygon(poly_r, poly_z):
         """
         Processes polygon data to match EFITEquilibrium requirements
         :param poly_r: Array with r polygon coordinated.
@@ -49,7 +75,7 @@ class COMPASSEquilibrium_base:
         :return: EFITEquilibrium object
         """
 
-        time_slice = self._data.sel(time = time, method="nearest")
+        time_slice = self._data.sel(time=time, method="nearest")
 
         r = time_slice.R.values
         z = time_slice.Z.values
@@ -77,8 +103,10 @@ class COMPASSEquilibrium_base:
         b_vacuum_radius = time_slice.Btor_vacuum_radius
         b_vacuum_magnitude = time_slice.Btor_vacuum_magnitude.values
 
-        lcfs_polygon = self._process_efit_polygon(time_slice.R_lcfs.values, time_slice.Z_lcfs.values)
-        limiter_polygon = self._process_efit_polygon(time_slice.R_limiter.values, time_slice.Z_limiter.values)
+        lcfs_polygon = self.process_efit_polygon(time_slice.R_lcfs.values, time_slice.Z_lcfs.values)
+
+        if "R_limiter" in time_slice.data_vars.keys() and "Z_limiter":
+            limiter_polygon = self.process_efit_polygon(time_slice.R_limiter.values, time_slice.Z_limiter.values)
 
 
         return EFITEquilibrium(r=r, z=z, psi_grid=psi_grid, psi_axis=psi_axis,psi_lcfs=psi_lcfs, magnetic_axis=magnetic_axis,
