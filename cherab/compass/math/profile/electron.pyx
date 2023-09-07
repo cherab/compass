@@ -128,7 +128,7 @@ cdef class ModifiedTanhGaussian(Function1D):
 
         mtanh = self.mtanh(x)
 
-        return 0.5 * (self._ped_height - self._ped_sol) * (mtanh + 1)
+        return 0.5 * (self._ped_height - self._ped_sol) * (mtanh + 1) + self._ped_sol
 
     cdef double mtanh(self, double x):
         """
