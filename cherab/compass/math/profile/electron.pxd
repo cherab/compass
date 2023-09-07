@@ -1,5 +1,4 @@
-from raysect.core.math.function cimport Function1D
-
+from cherab.core.math.function cimport Function1D
 
 cdef class ModifiedTanhGaussian(Function1D):
 
